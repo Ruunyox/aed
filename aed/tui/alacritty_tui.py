@@ -3,9 +3,6 @@ import os
 from typing import Union, List, Callable
 from aed.container.alacritty_container import AlacrittyContainer
 
-VERSION = aed.__version__
-
-
 class Tui(object):
     """Urwid text user interface for manipulating Alacritty color, font, and opacity options
 
