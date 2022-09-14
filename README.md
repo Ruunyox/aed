@@ -4,6 +4,10 @@ AED (Alacritty Editor) is a simple urwid-based TUI
 for instantaneous color/font/opacity adjustments directly
 in your shell for the alacritty terminal emulator.
 
+<p align="center">
+<img src='demo.gif' width=500px>
+</p>
+
 ## Usage
 ```
 usage: aed [-h] [--colors COLORS] [--font FONT] [--opacity OPACITY]
