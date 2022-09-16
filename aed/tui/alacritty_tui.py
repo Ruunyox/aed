@@ -3,6 +3,7 @@ import os
 from typing import Union, List, Callable
 from aed.container.alacritty_container import AlacrittyContainer
 
+
 class Tui(object):
     """Urwid text user interface for manipulating Alacritty color, font, and opacity options
 
@@ -166,9 +167,9 @@ class Tui(object):
             ),
             urwid.SolidFill(" "),
             align="center",
-            width=("relative", 80),
+            width=("relative", 90),
             valign="middle",
-            height=("relative", 80),
+            height=("relative", 90),
         )
         top = urwid.Frame(
             top,
@@ -207,7 +208,7 @@ class Tui(object):
         """Generates a display of the current normal/bright shell colors 0-15"""
 
         colors = [
-            urwid.Filler(urwid.AttrMap(urwid.Text(" "), attr), top=0, bottom=0)
+            urwid.Filler(urwid.AttrMap(urwid.Text(" "), attr))
             for attr in Tui._color_keys
         ]
         bright_colors = [
@@ -230,7 +231,7 @@ class Tui(object):
         bar = urwid.ProgressBar("filled", "unfilled", percent)
         opacity_box = urwid.AttrMap(
             urwid.LineBox(
-                urwid.Filler(bar), title="[ Opacity] ", **Tui._menu_style_kwargs
+                urwid.Filler(bar), title="[ Opacity ]", **Tui._menu_style_kwargs
             ),
             "menu",
         )

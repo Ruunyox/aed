@@ -60,15 +60,10 @@ def main():
 
     if opts.opacity != None:
         opacity = round(opts.opacity, 2)
-        validation = ac._validate_opacity(opts.opacity)
-        if validation == False:
-            raise ValueError(
-                "Input opacity {} is not acceptable. Must be a float between 0 and 1 inclusive.".format(
-                    opacity
-                )
-            )
-        else:
-            ac.set_opacity(opacity)
+        exception = ac.set_opacity(opacity)
+        if exception != None:
+            raise exception
+
     if len([opt for opt, val in vars(opts).items() if val != None]) == 0:
         tui = Tui(ac)
 

@@ -328,3 +328,5 @@ class AlacrittyContainer(object):
         if AlacrittyContainer._validate_opacity(opacity):
             self.alacritty_config["window"]["opacity"] = opacity
             self.dump_current_alacritty_config()
+        else:
+            return ValueError("Opacity {} is not valid.".format(opacity))
