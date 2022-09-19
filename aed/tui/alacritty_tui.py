@@ -79,10 +79,14 @@ class Tui(object):
             base_opacity = self.container.alacritty_config["window"]["opacity"]
 
         menu1 = Tui._make_select_menu(
-            list(self.container.colors.keys()), self.container.set_colors, "[ COLORS ]"
+            list(self.container.colors.keys()),
+            self.container.set_named_colors,
+            "[ COLORS ]",
         )
         menu2 = Tui._make_select_menu(
-            list(self.container.fonts.keys()), self.container.set_font, "[ FONTS ]"
+            list(self.container.fonts.keys()),
+            self.container.set_named_font,
+            "[ FONTS ]",
         )
         menu3 = Tui._make_opacity_box(base_opacity)
         menu4 = Tui._make_font_display()

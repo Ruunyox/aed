@@ -154,7 +154,10 @@ class AlacrittyContainer(object):
         font_dir: str = ALACRITTY_FONT_DIR,
     ):
         self.config_fn = config_fn
-        self.alacritty_config = AlacrittyContainer.load_yaml(self.config_fn)
+        try:
+            self.alacritty_config = AlacrittyContainer.load_yaml(self.config_fn)
+        except RuntimeError:
+            print("Unable to load {}. Check file YAML validity.".format(self.config_fn))
         self.colors = AlacrittyContainer.get_colors(color_dir)
         self.fonts = AlacrittyContainer.get_fonts(font_dir)
 
@@ -243,16 +246,23 @@ class AlacrittyContainer(object):
         """Dumps current Alacritty configuration to file"""
         AlacrittyContainer.dump_yaml(self.alacritty_config, self.config_fn)
 
-    def set_colors(self, color_key: str, *args) -> Union[None, BaseException]:
+    def set_named_colors(self, color_key: str, *args):
+        color_fn = self.colors[color_key]
+        self.set_colors(color_fn)
+
+    def set_named_font(self, font_key: str, *args):
+        font_fn = self.fonts[font_key]
+        self.set_font(font_fn)
+
+    def set_colors(self, color_fn: str) -> Union[None, BaseException]:
         """Validates a propsed set of color options and, if successful, edits the
         current, loaded Alacritty configuration. The updated configuration is then
         dumped.
 
         Parameters
         ----------
-        color_key:
-            Name of the proposed color option, as a key whose value in the color option
-            dictionary is the absolute path to the associated color option YAML file.
+        color_fn:
+            Path to a dictionary of Alacritty color options
 
         Returns
         -------
@@ -260,8 +270,6 @@ class AlacrittyContainer(object):
             If the proposed color option is valid, then it is immediately applied. Else,
             A `KeyError` is returned.
         """
-
-        color_fn = self.colors[color_key]
         color_map = AlacrittyContainer.load_yaml(color_fn)
         exception = AlacrittyContainer._validate_colors(color_map)
         if exception != None:
@@ -269,16 +277,15 @@ class AlacrittyContainer(object):
         self.alacritty_config["colors"] = color_map["colors"]
         self.dump_current_alacritty_config()
 
-    def set_font(self, font_key: str, *args) -> Union[None, BaseException]:
+    def set_font(self, font_fn: str) -> Union[None, BaseException]:
         """Validates a propsed set of font options and, if successful, edits the
         current, loaded Alacritty configuration. The updated configuration is then
         dumped.
 
         Parameters
         ----------
-        font_key:
-            Name of the proposed font option, as a key whose value in the font option
-            dictionary is the absolute path to the associated font option YAML file.
+        font_fn:
+            Path to a dictionary of Alacritty font options
 
         Returns
         -------
@@ -287,7 +294,6 @@ class AlacrittyContainer(object):
             A `KeyError` is returned.
         """
 
-        font_fn = self.fonts[font_key]
         font_map = AlacrittyContainer.load_yaml(font_fn)
         exception = AlacrittyContainer._validate_fonts(font_map)
         if exception != None:
@@ -303,9 +309,9 @@ class AlacrittyContainer(object):
     def _validate_opacity(opacity: float) -> bool:
         """Makes sure that the input opacity is a float between 0.0 and 1.0, inclusive"""
         if (opacity < 0) or (opacity > 1):
-            return False
+            return ValueError("{} is not a valid opacity value.".format(opacity))
         else:
-            return True
+            return None
 
     def set_opacity(self, opacity: float) -> Union[None, BaseException]:
         """Validates a propsed background window opacity and, if successful, edits the
@@ -325,8 +331,9 @@ class AlacrittyContainer(object):
             A `KeyError` is returned.
         """
 
-        if AlacrittyContainer._validate_opacity(opacity):
+        exception = AlacrittyContainer._validate_opacity(opacity)
+        if exception != None:
+            return exception
+        else:
             self.alacritty_config["window"]["opacity"] = opacity
             self.dump_current_alacritty_config()
-        else:
-            return ValueError("Opacity {} is not valid.".format(opacity))

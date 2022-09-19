@@ -39,24 +39,14 @@ def main():
 
     ac = AlacrittyContainer(ALACRITTY_CONFIG, ALACRITTY_COLOR_DIR, ALACRITTY_FONT_DIR)
     if opts.colors:
-        with open(opts.colors, "r") as cfile:
-            color_map = yaml.load(cfile)
-        exception = ac._validate_colors(color_map)
+        exception = ac.set_colors(opts.colors)
         if exception != None:
             raise exception
-        else:
-            ac.alacritty_config["colors"] = color_map["colors"]
-            ac.dump_current_alacritty_config()
 
     if opts.font:
-        with open(opts.font, "r") as ffile:
-            font_map = yaml.load(ffile)
-        exception = ac._validate_fonts(font_map)
+        exception = ac.set_font(opts.font)
         if exception != None:
             raise exception
-        else:
-            ac.alacritty_config["font"] = font_map["font"]
-            ac.dump_current_alacritty_config()
 
     if opts.opacity != None:
         opacity = round(opts.opacity, 2)
